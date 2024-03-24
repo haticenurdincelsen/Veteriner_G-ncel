@@ -1,0 +1,77 @@
+html{
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+.başlık {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Dikey eksende ortalamak için */
+  padding: 2rem;
+  gap: 1rem;
+  text-align: center;
+}
+h3{
+  font-size:x-large;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.animal-newanimal input {
+  width: 80%; /* Sayfanın genişliğini kaplamak için */
+  border: 1px solid black; /* Çerçeve oluşturmak için */
+  padding: 1rem; /* Çerçeve içinde içeriği hizalamak için */
+  font-size: 1rem;
+  margin-bottom: 8px;
+  display: inline-block; /* İnputu inline-block yap */
+}
+
+.animal-updateanimal input{
+  width: 80%; /* Sayfanın genişliğini kaplamak için */
+  border: 1px solid black; /* Çerçeve oluşturmak için */
+  padding: 1rem; /* Çerçeve içinde içeriği hizalamak için */
+  font-size: 1rem;
+  margin-bottom: 8px;
+  display: inline-block; /* İnputu inline-block yap */
+}
+button{
+  width: 10rem;
+  height: 3rem;
+  border-radius: 0.5rem; 
+  background-color: palevioletred;
+  display: flex; /* İçeriği hizalamak için */
+  justify-content: center; /* İçeriği yatayda ortalamak için */
+  align-items: center; /* İçeriği dikeyde ortalamak için */
+  text-align: center; /* Gerekli olmayabilir, ancak eğer içerik çok satırdan oluşuyorsa, bu özellik metni yatayda ortalamak için gereklidir */
+  font-size: 1rem;
+  padding: 1rem; /* Çerçeve içinde içeriği hizalamak için */
+  font-size: 1rem;
+  margin-bottom: 8px;
+  display: inline-block; /* İnputu inline-block yap */
+}
+
+.min-nav {
+  width: 80%; /* Sayfanın genişliğini kaplamak için */
+  border: 1px solid black; /* Çerçeve oluşturmak için */
+  font-size: 1rem;
+  margin-bottom: 8px;
+  margin-left: auto; /* Sayfanın sol kenarına yerleştirir */
+  margin-right: auto; /* Sayfanın sağ kenarına yerleştirir */
+  padding: 1rem; /* Çerçeve içinde içeriği hizalamak için */
+  box-sizing: border-box; /* Padding'i genişlik ve yüksekliğe dahil eder */
+  border-collapse: separate;
+  text-align: center; /* İçeriği yatayda ortalamak için */
+}
+.animal-select{
+  width: 80%; /* Sayfanın genişliğini kaplamak için */
+  border: 1px solid black; /* Çerçeve oluşturmak için */
+  padding: 1rem; /* Çerçeve içinde içeriği hizalamak için */
+  font-size: 1rem;
+  margin-bottom: 8px;
+  display: inline-block; /* İnputu inline-block yap */
+}
+
+
+
+

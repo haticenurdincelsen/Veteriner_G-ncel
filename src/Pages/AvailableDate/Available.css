@@ -1,0 +1,41 @@
+html{
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+  }
+ 
+  h3{
+    font-size:x-large;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  
+  
+  .input{
+    width: 80%; /* Sayfanın genişliğini kaplamak için */
+    border: 1px solid black; /* Çerçeve oluşturmak için */
+    padding: 1rem; /* Çerçeve içinde içeriği hizalamak için */
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: inline-block; /* İnputu inline-block yap */
+  }
+  button{
+    width: 10rem;
+    height: 3rem;
+    border-radius: 0.5rem; 
+    background-color: palevioletred;
+    display: flex; /* İçeriği hizalamak için */
+    justify-content: center; /* İçeriği yatayda ortalamak için */
+    align-items: center; /* İçeriği dikeyde ortalamak için */
+    text-align: center; /* Gerekli olmayabilir, ancak eğer içerik çok satırdan oluşuyorsa, bu özellik metni yatayda ortalamak için gereklidir */
+    font-size: 1rem;
+    padding: 1rem; /* Çerçeve içinde içeriği hizalamak için */
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: inline-block; /* İnputu inline-block yap */
+  }
+  
+  
+  
+  
