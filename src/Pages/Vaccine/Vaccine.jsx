@@ -1,141 +1,200 @@
 // Vaccine.jsx
-import React, { useState, useEffect } from "react";
-import { getAllVaccines, createVaccine, updateVaccine, deleteVaccine } from "../../API/Vaccine";
+import { useState, useEffect } from "react";
+import { getVaccines, createVaccine, updateVaccine, deleteVaccine } from "../../API/Vaccine";
+import { getAnimals } from "../../API/Animal";
+import { getReport } from "../../API/Report";
 import UpdateIcon from "@mui/icons-material/Update";
 import DeleteIcon from '@mui/icons-material/Delete';
+import '../Vaccine/Vaccine.css'
 
 function Vaccine() {
-  const initialVaccineState = {
+  const [vaccine, setVaccine] = useState([]);
+  const [reload, setReload] = useState(true);
+  const [animals, setAnimals] = useState([]);
+  const [reports, setReports] = useState([]);
+
+  const [newVaccine, setNewVaccine] = useState({
     name: "",
     code: "",
-    protectionStartDate: "",
+    protectionStartDate: "", 
     protectionFinishDate: "",
     animal: "",
-    reportId: "" // reportId alanı eklendi
-  };
-
-  const [vaccines, setVaccines] = useState([]);
-  const [reload, setReload] = useState(true);
-  const [newVaccine, setNewVaccine] = useState(initialVaccineState);
-  const [updateVaccineData, setUpdateVaccineData] = useState(initialVaccineState);
-  const [animals, setAnimals] = useState([]);
+    report: "" ,
+  });
+  const [updateVaccineData, setUpdateVaccineData] = useState({
+    name: "",
+    code: "",
+    protectionStartDate: "", 
+    protectionFinishDate: "", 
+    animal: "",
+    report: "" ,
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const vaccinesData = await getAllVaccines();
-        setVaccines(vaccinesData);
+    getVaccines().then((data) => {
+      setVaccine(data);
+  });
+  getAnimals().then((data) => {
+      setAnimals(data);
+  });
+  getReport().then((data) => {
+    setReports(data);
+});
+}, [reload]);
 
-        // Eğer animal API'sini kullanacaksak, burada animals'i de güncellememiz gerekiyor.
-        // const animalsData = await getAllAnimals();
-        // setAnimals(animalsData);
-      } catch (error) {
-        console.error("Veriler alınırken bir hata oluştu:", error);
-      }
-    };
 
-    fetchData();
-  }, [reload]);
-
-  // Yeni aşı oluşturma işlemi
-  const handleCreate = async () => {
-    try {
-      await createVaccine(newVaccine);
-      setReload(!reload);
-      setNewVaccine(initialVaccineState);
-    } catch (error) {
-      console.error("Aşı oluşturulurken bir hata oluştu:", error);
-    }
-  };
-
-  // Yeni aşı formundaki değişiklikleri takip etmek için
-  const handleNewVaccineChange = (e) => {
+  
+  const handleNewVaccine = (e) => {
     const { name, value } = e.target;
     setNewVaccine((prevVaccine) => ({
-      ...prevVaccine,
-      [name]: value,
-      reportId: prevVaccine.reportId // Eğer mevcutsa reportId'i de güncelle
+        ...prevVaccine,
+        [name]: value
     }));
-  };
+};
 
-  // Aşı silme işlemi
-  const handleDelete = async (id) => {
-    try {
-      await deleteVaccine(id);
-      setReload(!reload);
-    } catch (error) {
-      console.error("Aşı silinirken bir hata oluştu:", error);
-    }
-  };
-
-  // Aşı güncelleme işlemi
-  const handleUpdate = async () => {
-    try {
-      await updateVaccine(updateVaccineData);
-      setReload(!reload);
-      setUpdateVaccineData(initialVaccineState); // Formu sıfırla
-    } catch (error) {
-      console.error("Aşı güncellenirken bir hata oluştu:", error);
-    }
-  };
-
-  // Güncellenecek aşı verilerini doldurmak için
-  const handleUpdateBtn = (vaccine) => {
+const handleDelete = (id) => {
+  deleteVaccine(id).then(() => {
+      setVaccine(!reload);
+  });
+};
+const handleUpdate = () => {
+  console.log(updateVaccineData)
+  const newObj={
+    name:updateVaccineData.name ,
+    code: updateVaccineData.code,
+    protectionStartDate:updateVaccineData.protectionStartDate , 
+    protectionFinishDate:updateVaccineData.protectionFinishDate , 
+    animal: updateVaccineData.animalForReportResponseDto?.id,
+    report: updateVaccineData.appointmentForReportResponseDto?.id ,
+  }
+  console.log(newObj)
+  updateVaccine(newObj)
+  .then(() => {
+    setReload(true);
+    // Update işlemi sonrasında updateReportData nesnesini temizleme
     setUpdateVaccineData({
-      ...vaccine, // Tüm aşı verilerini al
-      animal: vaccine.animal.id, // Sadece animal alanını güncelle
-      reportId: vaccine.reportId // reportId alanını da güncelle (varsa)
+      name: "",
+      code: "",
+      protectionStartDate:"", 
+      protectionFinishDate:"", // Değiştirildi
+      animal:updateVaccineData.animal, // Randevu bilgisini temizleme
+      report:updateVaccineData.report // Randevu bilgisini temizleme,
+       
     });
+})
+.catch((error) => {
+    console.error("Güncelleme işlemi sırasında bir hata oluştu:", error);
+});
+};
+
+const handleUpdateBtn = (vac) => {
+  setUpdateVaccineData({
+      ...vac,
+     animal: vac.animal ? { id: vac.animal.id } : {},
+     report: vac.report ? { id: vac.report.id } : {}
+      
+  });
+};
+const handleCreate = () => {
+  console.log(vaccine)
+  const newVaccineData = {
+    name: newVaccine.name,
+    code: newVaccine.code,
+    protectionStartDate: newVaccine.protectionStartDate, // Değiştirildi
+    protectionFinishDate: newVaccine.protectionFinishDate, // Değiştirildi
+    animalWithoutCustomer: {
+      id: newVaccine.animal
+    },
+    reportId: newVaccine.report
   };
 
-  // Güncelleme formundaki değişiklikleri takip etmek için
-  const handleUpdateChange = (e) => {
-    const { name, value } = e.target;
-    setUpdateVaccineData((prevUpdateVaccineData) => ({
-      ...prevUpdateVaccineData,
-      [name]: value,
-      reportId: prevUpdateVaccineData.reportId // Eğer mevcutsa reportId'i de güncelle
+  createVaccine(newVaccineData)
+    .then(() => {
+      setReload(!reload);
+    })
+    .catch((error) => {
+      console.error("Aşı ekleme işlemi sırasında bir hata oluştu:", error);
+    });
+
+  // Yeni aşı ekledikten sonra formu sıfırla
+  setNewVaccine({
+    name: "",
+    code: "",
+    protectionStartDate: "", // Değiştirildi
+    protectionFinishDate: "", // Değiştirildi
+    animal: "",
+    report: ""
+  });
+};
+
+const handleUpdateChange = (event) => {
+  const { name, value } = event.target;
+  if (name === "animal") {
+    setUpdateVaccineData((prevVaccine) => ({
+      ...prevVaccine,
+      animal: {
+        id: value,
+      }
     }));
-  };
-
+  } else if (name === "report") {
+    setUpdateVaccineData((prevVaccine) => ({
+      ...prevVaccine,
+      report: {  // Burada "reportl" yerine "report" olmalı
+        id: value,
+      }
+    }));
+  } else {
+    setUpdateVaccineData({
+      ...updateVaccineData,
+      [name]: value,
+    });
+  }
+}
   return (
     <div>
+       <h1 className="başlık">Aşı Yönetimi</h1> <br />
+       <div>
       <h3>Aşı Ekleme</h3>
       <input
         type="text"
         name="name"
         placeholder="Name"
         value={newVaccine.name}
-        onChange={handleNewVaccineChange}
+        onChange={handleNewVaccine}
       />
       <input
         type="text"
         name="code"
         placeholder="Code"
         value={newVaccine.code}
-        onChange={handleNewVaccineChange}
+        onChange={handleNewVaccine}
       />
       <input
         type="date"
-        name="protectionStartDate"
-        value={newVaccine.protectionStartDate}
-        onChange={handleNewVaccineChange}
+        name="protectionStartDate" // Değiştirildi
+        value={newVaccine.protectionStartDate} // Değiştirildi
+        onChange={handleNewVaccine}
       />
       <input
         type="date"
-        name="protectionFinishDate"
-        value={newVaccine.protectionFinishDate}
-        onChange={handleNewVaccineChange}
+        name="protectionFinishDate" // Değiştirildi
+        value={newVaccine.protectionFinishDate} // Değiştirildi
+        onChange={handleNewVaccine}
       />
-      <input
-        type="text"
+        <select className="vaccine-select"
         name="animal"
-        placeholder="Animal"
         value={newVaccine.animal}
-        onChange={handleNewVaccineChange}
-      />
-      <button onClick={handleCreate}>Add Vaccine</button>
-
+        onChange={handleNewVaccine}>
+        <option value="" disabled>Randevu Seç</option>
+        {animals.map((animal) => (
+        <option key={animal.id} value={animal.id}>
+        {animal.name}
+        </option>
+        ))}
+        </select> <br />                
+      <button onClick={handleCreate}>Add Vaccine</button> <br />
+      </div>
+      <div>
       <h3>Aşı Güncelleme</h3>
       <input
         type="text"
@@ -153,27 +212,33 @@ function Vaccine() {
       />
       <input
         type="date"
-        name="protectionStartDate"
-        value={updateVaccineData.protectionStartDate}
+        name="protectionStartDate" // Değiştirildi
+        value={updateVaccineData.protectionStartDate} // Değiştirildi
         onChange={handleUpdateChange}
       />
       <input
         type="date"
-        name="protectionFinishDate"
-        value={updateVaccineData.protectionFinishDate}
+        name="protectionFinishDate" // Değiştirildi
+        value={updateVaccineData.protectionFinishDate} // Değiştirildi
         onChange={handleUpdateChange}
       />
-      <input
-        type="text"
+      <select className="vaccine-select"
         name="animal"
-        placeholder="Animal"
         value={updateVaccineData.animal}
-        onChange={handleUpdateChange}
-      />
-      <button onClick={handleUpdate}>Update Vaccine</button>
-
+        onChange={handleUpdateChange}>
+        <option value="" disabled>Randevu Seç</option>
+        {animals.map((animal) => (
+        <option key={animal.id} value={animal.id}>
+        {animal.name}
+        </option>
+        ))}
+        </select> <br />    
+      <button onClick={handleUpdate}>Update Vaccine</button> <br />
+      </div>
+      <br />
       <h3>Aşı Listesi</h3>
-      <table>
+      <br />
+      <table className="min-nav">
         <thead>
           <tr>
             <th>Name</th>
@@ -185,12 +250,12 @@ function Vaccine() {
           </tr>
         </thead>
         <tbody>
-          {vaccines.map((vaccine) => (
+          {vaccine.map((vaccine) => (
             <tr key={vaccine.id}>
               <td>{vaccine.name}</td>
               <td>{vaccine.code}</td>
-              <td>{vaccine.protectionStartDate}</td>
-              <td>{vaccine.protectionFinishDate}</td>
+              <td>{vaccine.protection_start_date}</td>
+              <td>{vaccine.protection_finish_date}</td>
               <td>{vaccine.animal.name}</td>
               <td>
                 <span onClick={() => handleDelete(vaccine.id)}>

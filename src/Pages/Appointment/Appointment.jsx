@@ -4,6 +4,7 @@ import { getDoctor } from "../../API/Doctor";
 import { getAnimals } from "../../API/Animal";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UpdateIcon from '@mui/icons-material/Update';
+import '../Appointment/Appointment.css'
 
 function Appointment() {
   const [appointments, setAppointments] = useState([]);
@@ -41,6 +42,7 @@ function Appointment() {
   }
 
   const handleCreate = () => {
+    console.log(appointments)
     createAppointment(newAppointment).then(() => {
       setReload(true);
     });
@@ -126,6 +128,7 @@ function Appointment() {
             </option>
           ))}
         </select>
+        <br />
         <select
           name="animal"
           value={newAppointment?.animal?.id}
@@ -139,16 +142,17 @@ function Appointment() {
               {animal.name}
             </option>
           ))}
-        </select>
+        </select> <br />
         <input
           type="datetime-local"
           name="date"
           value={newAppointment.date}
           onChange={handleNewAppointment}
-        />
-        <button onClick={handleCreate}>EKLE</button>
+        /> <br />
+        <button onClick={handleCreate}>EKLE</button> <br />
       </div>
       <div className="appointment-updateappointment">
+        <br />
         <select
           name="doctor"
           value={updateAppointmentData?.doctor?.id}
@@ -163,6 +167,7 @@ function Appointment() {
             </option>
           ))}
         </select>
+        <br />
         <select
           name="animal"
           value={updateAppointmentData?.animal?.id}
@@ -182,8 +187,8 @@ function Appointment() {
           name="date"
           value={updateAppointmentData.date}
           onChange={handleUpdateChange}
-        />
-        <button onClick={handleUpdate}>Güncelle</button>
+        /> <br />
+        <button onClick={handleUpdate}>Güncelle</button> <br />
       </div>
       <h3>Randevu Listesi</h3>
       <table className="min-nav">

@@ -2,7 +2,8 @@ import axios from "axios";
 
 // Randevu verilerini çekme işlemi
 export const getAppointment = async () => {
-    const { data } = await axios.get("http://localhost:8080/api/v1/appointments");
+    const { data } = await axios.get(
+        import.meta.env.VITE_APP_BASE_URL +  "/api/v1/appointments");
     return data;
 };
 

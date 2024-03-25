@@ -26,7 +26,6 @@ function App() {
       <Route path='/doctor' element={<Doctor/>}/> 
       <Route path='/availableDate' element={<AvailableDate/>}/> 
 
-
     </Routes>
    
     </>

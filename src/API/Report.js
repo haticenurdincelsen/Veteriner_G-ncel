@@ -20,7 +20,7 @@ export const deleteReport= async (id) => {
     return data;
 };
 export const updateReportFunc = async (report) => {   
-  const { data } = await axios.put(
-    import.meta.env.VITE_APP_BASE_URL + `/api/v1/reports/${report.id}`, report);
-  return data;
+    const { data } = await axios.put(
+      import.meta.env.VITE_APP_BASE_URL + `/api/v1/reports/${report.id}`, report);
+    return data;
 };

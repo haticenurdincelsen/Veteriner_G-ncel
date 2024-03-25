@@ -3,6 +3,7 @@ import { createReport, getReport, deleteReport, updateReportFunc } from "../../A
 import { getAppointment } from "../../API/Appointment";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UpdateIcon from '@mui/icons-material/Update';
+import '../Report/Report.css';
 
 function Report() {
     const [report, setReport] = useState([]);
@@ -44,34 +45,41 @@ function Report() {
     };
 
     const handleUpdate = () => {
-        updateReportFunc(updateReportData)
+        console.log(updateReportData)
+        const newObj={
+            id:updateReportData.id,
+            diagnosis: updateReportData.diagnosis,
+             price: updateReportData.price,
+             appointmentId: updateReportData.appointmentForReportResponseDto?.id
+        }
+        console.log(newObj)
+        updateReportFunc(newObj)
             .then(() => {
-                setReload(!reload);
+                setReload(true);
+                // Update işlemi sonrasında updateReportData nesnesini temizleme
                 setUpdateReportData({
                     id: "",
                     diagnosis: "",
                     price: "",
-                    appointment: ""
+                    appointment: updateReportData.appointment // Randevu bilgisini temizleme
                 });
             })
             .catch((error) => {
                 console.error("Güncelleme işlemi sırasında bir hata oluştu:", error);
             });
     };
-    const handleUpdateBtn = (rep) => {
-        if (rep && rep.id && rep.appointment && rep.appointment.id) {
-            setUpdateReportData({
-                ...rep,
-                appointment: { id: rep.appointment.id } // Randevu ID'siyle doldur
-            });
-        } else {
-            console.error("Güncelleme için geçerli bir rapor seçilmedi veya randevu bilgisi eksik.");
-        }
-    };
-  
     
 
+    const handleUpdateBtn = (rep) => {
+        setUpdateReportData({
+            ...rep,
+            // rep.appointmentId alanını kontrol etmek yerine rep.appointment alanını kontrol etmek daha doğru
+            appointment: rep.appointment ? { id: rep.appointment.id } : {}
+        });
+    };
+    
     const handleCreate = () => {
+        console.log(report)
         const selectedAppointmentId = newReport.appointment;
         const newReportData = {
             diagnosis: newReport.diagnosis,
@@ -88,10 +96,29 @@ function Report() {
         });
     };
 
+    const handleUpdateChange = (event) => {
+        const { name, value } = event.target;
+        if (name === "appointment") {
+            // Seçilen randevunun id'sini alarak updateReportData'ya atayın
+            const selectedAppointment = appointments.find(appointment => appointment.id === value);
+            const appointmentId = selectedAppointment ? selectedAppointment.id : null;
+            setUpdateReportData((prevReport) => ({
+                ...prevReport,
+                appointment: appointmentId // Seçilen randevu id'sini set edin
+            }));
+        } else {
+            setUpdateReportData({
+                ...updateReportData,
+                [name]: value,
+            });
+        }
+    };
+
     return (
         <div>
-            <h3>Raporlar</h3>
-            <div>
+            <h1 className="başlık">Rapor Yönetimi</h1> <br />
+            <h3>Rapor Ekleme</h3>
+            <div  className="animal-newanimal">
                 <div>
                     <input
                         type="text"
@@ -104,8 +131,8 @@ function Report() {
                         placeholder="Fiyat"
                         name="price"
                         value={newReport.price}
-                        onChange={handleNewReport} />
-                    <select
+                        onChange={handleNewReport} /> <br />
+                    <select className="report-select"
                         name="appointment"
                         value={newReport.appointment}
                         onChange={handleNewReport}>
@@ -115,8 +142,9 @@ function Report() {
                                 {appointment.animal.name}
                             </option>
                         ))}
-                    </select>
+                    </select> <br />
                     <button onClick={handleCreate}>Rapor Ekle</button>
+                    </div>
                 </div>
                 <div>
                     <input
@@ -124,17 +152,17 @@ function Report() {
                         placeholder="Teşhis"
                         name="diagnosis"
                         value={updateReportData.diagnosis}
-                        onChange={(event) => setUpdateReportData({...updateReportData, diagnosis: event.target.value})} />
+                        onChange={handleUpdateChange} />
                     <input
                         type="text"
                         placeholder="Fiyat"
                         name="price"
                         value={updateReportData.price}
-                        onChange={(event) => setUpdateReportData({...updateReportData, price: event.target.value})} />
-                    <select
+                        onChange={handleUpdateChange} /> <br />
+                    <select className="report-select"
                         name="appointment"
                         value={updateReportData.appointment}
-                        onChange={(event) => setUpdateReportData({...updateReportData, appointment: event.target.value})}>
+                        onChange={handleUpdateChange}>
                         <option value="" disabled>Randevu Seç</option>
                         {appointments.map((appointment) => (
                             <option key={appointment.id} value={appointment.id}>
@@ -142,21 +170,41 @@ function Report() {
                             </option>
                         ))}
                     </select>
-                    
+                    <br />
                     <button onClick={handleUpdate}>Rapor Güncelle</button>
-                
+                <br />
                 </div>
-                {report.map((report) => (
-                    <div key={report.id}>
-                        {report.diagnosis} {report.price}
-                        <span id={report.id} onClick={() => handleDelete(report.id)} style={{ cursor: 'pointer' }}>
-                            <DeleteIcon />
-                        </span>
-                        <span onClick={() => handleUpdateBtn(report)} style={{ cursor: 'pointer' }}>
-                            <UpdateIcon />
-                        </span>
-                    </div>
-                ))}
+                <div>
+            <br />
+          <h3>Rapor Listesi</h3>
+          <br />
+                <table className="min-nav">
+                    <thead>
+                        <tr>
+                            <th>Teşhis</th>
+                            <th>Fiyat</th>
+                            <th>Randevu</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {report.map((report) => (
+                            <tr key={report.id}>
+                                <td>{report.diagnosis}</td>
+                                <td>{report.price}</td>
+                                <td>{report.appointment ? report.appointment.animal.name : ""}</td>
+                                <td>
+                                    <span onClick={() => handleDelete(report.id)} style={{ cursor: 'pointer' }}>
+                                        <DeleteIcon />
+                                    </span>
+                                    <span onClick={() => handleUpdateBtn(report)} style={{ cursor: 'pointer' }}>
+                                        <UpdateIcon />
+                                    </span>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

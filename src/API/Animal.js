@@ -24,3 +24,13 @@ export const updateAnimalFunc = async (animal) => {
         import.meta.env.VITE_APP_BASE_URL + `/api/v1/animals/${animal.id}`, animal);
     return data;
 };
+export const searchAnimalByName = async (name) => {
+    try {
+        const response = await axios.get(
+            import.meta.env.VITE_APP_BASE_URL + `/api/v1/animals/searchByName?name=${name}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while searching customer by name:", error);
+        throw error;
+    }
+};

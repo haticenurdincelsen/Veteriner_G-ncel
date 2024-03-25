@@ -24,3 +24,13 @@ export const updateCustomerFunc = async (customer) => {
     
     return data;
 };
+export const searchCustomerByName = async (name) => {
+    try {
+        const response = await axios.get(
+            import.meta.env.VITE_APP_BASE_URL + `/api/v1/customers/searchByName?name=${name}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while searching customer by name:", error);
+        throw error;
+    }
+};

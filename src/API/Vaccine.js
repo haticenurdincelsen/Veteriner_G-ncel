@@ -1,7 +1,7 @@
 // Vaccine.js
 import axios from "axios";
 
-export const getAllVaccines = async () => {
+export const getVaccines = async () => {
   const { data } = await axios.get(
     import.meta.env.VITE_APP_BASE_URL + "/api/v1/vaccines");
   return data;
@@ -9,7 +9,7 @@ export const getAllVaccines = async () => {
 
 export const createVaccine = async (vaccine) => {
   const { data } = await axios.post(
-    import.meta.env.VITE_APP_BASE_URL + "/api/v1/vaccines", vaccine);
+    import.meta.env.VITE_APP_BASE_URL + `/api/v1/vaccines`, vaccine);
   return data;
 };
 

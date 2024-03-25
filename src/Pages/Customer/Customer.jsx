@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import { getCustomer, deleteCustomer, createCustomer, updateCustomerFunc } from "../../API/Customer";
+import { useState, useEffect } from "react"
+import { getCustomer, deleteCustomer, createCustomer, updateCustomerFunc ,searchCustomerByName } from "../../API/Customer";
 import DeleteIcon from '@mui/icons-material/Delete';
 import UpdateIcon from '@mui/icons-material/Update';
-import './Customer.css';
+
 
 function Customer() {
   const [customer, setCustomer]= useState([]);
@@ -12,18 +12,18 @@ function Customer() {
     phone:"", 
     mail:"", 
     address:"", 
-    city:""
-  });
+    city:""});
   const [updateCustomer, setUpdateCustomer]= useState({
     name:"", 
     phone:"", 
     mail:"", 
     address:"", 
-    city:"",
-    id: ""
+    city:""
   });
+  const [searchName, setSearchName]= useState ("");
 
   useEffect(() => {
+    //Dosyalşarı çektiğimiz kısım
     getCustomer().then((data) => {
       setCustomer(data);
     });
@@ -31,35 +31,55 @@ function Customer() {
   }, [reload]);
 
   const handleDelete= (id) => {
-    deleteCustomer(id).then(() => {
-      setReload(true);
-    });
+    // const id =event.target.id
+    console.log(id);
+      deleteCustomer(id).then(() => {
+       setReload(true);
+      });
   };
-
+  //Müşteri güncelleme
   const handleUpdate =() =>{
-    updateCustomerFunc(updateCustomer).then(() => {
+    updateCustomerFunc(updateCustomer).then(()=>{
+      
       setReload(true);
     });
+    console.log("Güncelleme bitti")
     setUpdateCustomer({
       name:"",
       phone:"",
       mail:"",
       address:"",
-      city:"",
-      id: ""
+      city:""
     });
   };
+  
 
+  //Yeni Müşteri Ekleme
   const handleNewCustomer = (event) =>{
     setNewCustomer({
       ...newCustomer,
       [event.target.name]: event.target.value,
     });
+    
   };
+//ARAMA 
+const handleSearch = (event) => {
+  setSearchName(event.target.value);
+};
+
+const handleSearchBtn = () => {
+  searchCustomerByName(searchName).then((data) => {
+    setCustomer(data);
+  }).catch((error) => {
+    console.error("Error while searching customer by name:", error);
+  });
+};
+
+
 
   const handleCreate =() =>{
     createCustomer(newCustomer).then(() => {
-      setReload(true);
+      setReload(true)
     });
     setNewCustomer({
       name:"",
@@ -68,9 +88,10 @@ function Customer() {
       address:"",
       city:""
     });
-  };
+  }
 
   const handleUpdateBtn =(cust) =>{
+    
     setUpdateCustomer({
       name: cust.name,
       phone:cust.phone,
@@ -79,6 +100,7 @@ function Customer() {
       city:cust.city,
       id:cust.id
     });
+
   };
 
   const handleUpdateChange = (event) => {
@@ -87,6 +109,7 @@ function Customer() {
       [event.target.name]: event.target.value,
     });
   };
+
 
   return (
     <div>
@@ -110,6 +133,12 @@ function Customer() {
         <input type="text" placeholder="City" name="city" value={updateCustomer.city} onChange={handleUpdateChange} /><br />
         <button onClick={handleUpdate}>Update</button>
       </div>
+    <div><input type="text"
+        placeholder="SearchName"
+        name="search"
+        value={searchName.name}
+        onChange={handleSearch} /> <br />
+        <button onClick={handleSearchBtn}>Search</button></div>
       <div>
         <br />
         <h3>Müşteri Listesi</h3>
